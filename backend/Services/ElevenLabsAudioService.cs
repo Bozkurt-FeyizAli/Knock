@@ -22,8 +22,7 @@ namespace backend.Services
         {
             var apiKey = _configuration["AI_APIs:ElevenLabs:ApiKey"];
             
-            // Antoni: 2EiwWnXFnvU5JabPnv8n, Adam: pNInz6obpgDQGcFmaJcg (Default fallback to config if provided or use hardcoded)
-            var voiceId = sentiment.ToUpper() == "NEGATIVE" ? "JBFqnCBsd6RMkjVDRZzb" : "JBFqnCBsd6RMkjVDRZzb";
+            var voiceId = _configuration["AI_APIs:ElevenLabs:VoiceId"];
             var baseUrl = _configuration["AI_APIs:ElevenLabs:Url"];
 
             if(string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(voiceId) || string.IsNullOrEmpty(baseUrl)) {
@@ -41,7 +40,7 @@ namespace backend.Services
             var payload = new
             {
                 text = text,
-                model_id = "eleven_multilingual_v2", // Daha hızlı ve stabil olan v1 modeli
+                model_id = "eleven_multilingual_v2",
                 voice_settings = new 
                 { 
                     stability = 0.5, 
