@@ -21,7 +21,7 @@ public class GeminiService
         
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelId}:generateContent?key={apiKey}";
 
-        var prompt = $"Kullanıcının yükü: '{userBurden}'. Bob Dylan'ın Knockin' on Heaven's Door şarkısındaki 1973 yılı felsefesiyle, barışçıl ve karşı kültür bir tonda bu yüke veda etmesini sağlayan kısa (en fazla 2-3 cümle), şiirsel bir mektup/yanıt yaz. 70'ler FM radyo sunucusu gibi, rahat ve umut verici bir sesleniş olsun.";
+        var prompt = $"User’s burden: '{userBurden}'. Write a short (max 2–3 sentences), poetic letter/response that helps them let go of this burden, in the peaceful, countercultural spirit of Bob Dylan’s 1973-era 'Knockin’ on Heaven’s Door'. Let the tone feel like a laid-back, hopeful 70s FM radio host.";
 
         var requestBody = new
         {
@@ -48,12 +48,12 @@ public class GeminiService
                 .GetProperty("text")
                 .GetString();
 
-            return generatedText ?? "Radyo frekansı zayıfladı dostum... Tekrar dener misin?";
+            return generatedText ?? "The radio signal weakened, amigo... Try tuning in again.";
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Gemini API Error: {ex.Message}");
-            throw new Exception("Metin üretilirken bir hata oluştu.", ex);
+            throw new Exception("There was an error generating the text.", ex);
         }
     }
 }
