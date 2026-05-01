@@ -1,0 +1,68 @@
+<div class="relative h-screen w-screen overflow-hidden bg-[var(--void)] select-none {{ getShakeClass() }}"
+  (pointerdown)="handleStart($event)"
+  (pointerup)="handleEnd()"
+  (pointerleave)="handleEnd()">
+  
+  <!-- CRT overlay with scanlines -->
+  <div class="crt-overlay">
+    <div class="scanline-bar"></div>
+  </div>
+
+  <!-- Procedural noise canvas -->
+  <canvas #noiseCanvas class="noise-canvas" [style.opacity]="intensity()"></canvas>
+
+  <!-- White flash transition -->
+  <div class="flash-overlay" [class.flash-active]="phase() === 'flashing'" aria-hidden="true"></div>
+
+  <!-- Intro screen -->
+  @if (phase() === 'idle' || phase() === 'holding') {
+    <div class="fixed inset-0 z-20 flex flex-col items-center justify-center">
+      <!-- Main instruction text -->
+      <h1 class="text-flicker mb-8 px-8 text-center text-3xl font-bold tracking-[0.15em] text-[var(--faded-white)] md:text-5xl">
+        Hold the screen to catch the signal...
+      </h1>
+
+      <!-- Context metadata -->
+      <div class="mb-10 text-center text-sm tracking-[0.3em] text-[var(--dimmed)] font-mono">
+        <div class="mb-2">KNOCK — DESIGN YOUR DOOR</div>
+        <div>CSE 358 | INTRODUCTION TO ARTIFICIAL INTELLIGENCE</div>
+        <div class="mt-1">YTU | SPRING 2025–2026</div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="w-64 md:w-80 font-mono">
+        <div class="mb-2 flex justify-between text-[20px] tracking-widest text-[var(--dimmed)]">
+          <span>STATIC</span>
+          <span>SIGNAL</span>
+        </div>
+        <div class="h-1 w-full bg-[#111]">
+          <div
+            class="h-full bg-[var(--phosphor)] transition-none"
+            [style.width.%]="progress() * 100"
+            [style.boxShadow]="'0 0 8px var(--phosphor)'"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Hint -->
+      <div class="mt-8 text-[20px] tracking-widest text-[#444] font-mono">
+        {{ phase() === 'idle' ? 'TOUCH OR CLICK ANYWHERE AND HOLD' : 'KEEP HOLDING... FREQUENCY LOCKING' }}
+      </div>
+    </div>
+  }
+
+  <!-- Radio container revealed after flash -->
+  @if (phase() === 'radio') {
+    <div class="relative z-30 w-full h-full">
+      <app-radio-interface></app-radio-interface>
+    </div>
+    
+    <!-- Reset button for demo purposes -->
+    <button
+      (click)="resetExperience($event)"
+      class="fixed bottom-6 right-6 z-40 border border-[#333] bg-[#0a0a0a] px-3 py-1 text-[10px] uppercase tracking-widest text-[var(--dimmed)] transition-colors hover:border-[var(--phosphor)] hover:text-[var(--phosphor)] font-mono"
+    >
+      Replay Intro
+    </button>
+  }
+</div>
