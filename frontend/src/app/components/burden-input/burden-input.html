@@ -1,0 +1,72 @@
+<!-- The Whisper Door: where burdens are confessed to the static -->
+
+<div class="flex flex-col gap-5 mt-6 relative">
+
+  <!-- Label: whispered invitation -->
+  <label for="burden" class="font-serif italic text-amber-100/80 text-lg sm:text-xl drop-shadow-md tracking-wide leading-relaxed">
+    "What are you carrying?<br class="sm:hidden"> Which badge would you like to take off?"
+  </label>
+
+  <!-- The Whisper Field -->
+  <div class="relative group">
+    <textarea
+      id="burden"
+      [(ngModel)]="userText"
+      rows="4"
+      class="whisper-field w-full text-amber-200 rounded p-4 font-mono text-sm sm:text-base resize-none focus:outline-none leading-relaxed placeholder:italic"
+      placeholder="Whisper your signal here..."
+    ></textarea>
+    <!-- Subtle corner glow when focused -->
+    <div class="absolute -inset-1 rounded opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none"
+         style="background: radial-gradient(ellipse at 50% 0%, rgba(217,119,6,0.06) 0%, transparent 70%);">
+    </div>
+  </div>
+
+  <!-- The Badge Drop Zone -->
+  <div class="self-start relative cursor-pointer group mt-2"
+       (click)="onSubmit()"
+       [class.pointer-events-none]="!userText.trim() || isDropping">
+
+    <!-- Badge container with drop animation -->
+    <div class="relative"
+         [class]="isDropping ? 'badge-drop-anim' : ''">
+
+      <!-- The Sheriff Badge -->
+      <div class="sheriff-badge w-16 h-16 sm:w-18 sm:h-18 rounded-full flex items-center justify-center relative z-10"
+           [style.opacity]="isDropping ? '0' : '1'"
+           [class]="!isDropping ? 'group-hover:scale-105 transition-transform duration-300' : ''">
+
+        <!-- Badge text -->
+        <div class="text-yellow-100/90 text-[10px] sm:text-xs font-bold text-center leading-none tracking-[0.15em] relative z-10"
+             style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+          SHERIFF<br>73
+        </div>
+
+        <!-- Star emblem -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-20">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 text-yellow-200/60">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+
+        <!-- Inner ring detail -->
+        <div class="absolute inset-1.5 rounded-full border border-yellow-400/20 pointer-events-none"></div>
+      </div>
+    </div>
+
+    <!-- "Drop Badge" whisper label -->
+    <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] text-amber-600/40 uppercase tracking-[0.3em] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-500 font-mono">
+      Drop Badge
+    </div>
+
+    <!-- Mechanical switch indicator -->
+    <div class="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full transition-all duration-300"
+         [class]="isDropping ? 'bg-red-700/60' : 'bg-amber-800/30 group-hover:bg-amber-700/50'">
+    </div>
+  </div>
+
+  <!-- Subtle instruction line -->
+  <p class="font-mono text-[10px] text-amber-800/25 tracking-widest uppercase mt-1">
+    Press the badge to transmit your burden
+  </p>
+</div>
