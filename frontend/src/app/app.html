@@ -8,6 +8,9 @@
     <div class="scanline-bar"></div>
   </div>
 
+  <!-- Vignette (yeni) -->
+  <div class="vignette-overlay"></div>
+
   <!-- Procedural noise canvas -->
   <canvas #noiseCanvas class="noise-canvas" [style.opacity]="intensity()"></canvas>
 
@@ -17,52 +20,67 @@
   <!-- Intro screen -->
   @if (phase() === 'idle' || phase() === 'holding') {
     <div class="fixed inset-0 z-20 flex flex-col items-center justify-center">
+      
+      <!-- Frequency dial decoration (yeni) -->
+      <div class="freq-dial mb-16 text-[var(--phosphor-dim)] font-mono text-[10px] tracking-[0.5em] opacity-60">
+        <span class="inline-block animate-pulse">●</span> 530 · 800 · 1200 · 1600 <span class="inline-block animate-pulse">●</span>
+      </div>
+
       <!-- Main instruction text -->
-      <h1 class="text-flicker mb-8 px-8 text-center text-3xl font-bold tracking-[0.15em] text-[var(--faded-white)] md:text-5xl">
+      <h1 class="text-flicker mb-8 px-8 text-center text-3xl font-bold tracking-[0.15em] text-[var(--faded-white)] md:text-5xl"
+          [class.text-intensify]="phase() === 'holding'">
         Hold the screen to catch the signal...
       </h1>
 
-      <!-- Context metadata -->
-      <div class="mb-10 text-center text-sm tracking-[0.3em] text-[var(--dimmed)] font-mono">
-        <div class="mb-2">KNOCK — DESIGN YOUR DOOR</div>
-        <div>CSE 358 | INTRODUCTION TO ARTIFICIAL INTELLIGENCE</div>
-        <div class="mt-1">YTU | SPRING 2025–2026</div>
-      </div>
-
-      <!-- Progress bar -->
-      <div class="w-64 md:w-80 font-mono">
+      <!-- Progress bar with radio dial styling -->
+      <div class="w-72 md:w-96 font-mono">
         <div class="mb-2 flex justify-between text-[20px] tracking-widest text-[var(--dimmed)]">
-          <span>STATIC</span>
-          <span>SIGNAL</span>
+          <span>∇ STATIC</span>
+          <span>SIGNAL ∆</span>
         </div>
-        <div class="h-1 w-full bg-[#111]">
+        <!-- Dial ticks (yeni) -->
+        <div class="flex justify-between px-1 mb-1 text-[8px] text-[var(--phosphor-dim)] opacity-30 font-mono">
+          <span>|</span><span>|</span><span>|</span><span>|</span><span>|</span><span>|</span><span>|</span>
+        </div>
+        <div class="h-1.5 w-full bg-[#111] rounded-full relative overflow-hidden">
           <div
-            class="h-full bg-[var(--phosphor)] transition-none"
+            class="h-full rounded-full transition-none"
             [style.width.%]="progress() * 100"
-            [style.boxShadow]="'0 0 8px var(--phosphor)'"
+            [style.background]="'linear-gradient(90deg, #3a1a00, #d97a06, #f5c842)'"
+            [style.boxShadow]="'0 0 12px var(--phosphor), 0 0 24px var(--phosphor-dim)'"
           ></div>
+          <!-- Tuning needle (yeni) -->
+          <div class="absolute top-0 -translate-x-1/2 w-0.5 h-5 bg-[var(--phosphor)] shadow-[0_0_6px_var(--phosphor)] transition-all duration-75"
+               [style.left.%]="progress() * 100"></div>
         </div>
       </div>
 
-      <!-- Hint -->
-      <div class="mt-8 text-[20px] tracking-widest text-[#444] font-mono">
-        {{ phase() === 'idle' ? 'TOUCH OR CLICK ANYWHERE AND HOLD' : 'KEEP HOLDING... FREQUENCY LOCKING' }}
+      <!-- Hint with typewriter feel -->
+      <div class="mt-10 text-[20px] tracking-widest font-mono"
+           [class.text-amber-600]="phase() === 'idle'"
+           [class.text-amber-300]="phase() === 'holding'">
+        {{ phase() === 'idle' ? '⟐ TOUCH OR CLICK ANYWHERE AND HOLD' : '⟐ KEEP HOLDING... FREQUENCY LOCKING' }}
       </div>
+
+      <!-- Epigraph (yeni) -->
+      <p class="absolute bottom-10 text-[11px] font-serif italic text-[var(--phosphor-dim)] opacity-20 tracking-wider max-w-xs text-center leading-relaxed">
+        "Mama, take this badge off of me<br>I can't use it anymore"
+      </p>
     </div>
   }
 
   <!-- Radio container revealed after flash -->
   @if (phase() === 'radio') {
-    <div class="relative z-30 w-full h-full">
+    <div class="radio-enter-animation relative z-30 w-full h-full">
       <app-radio-interface></app-radio-interface>
     </div>
     
-    <!-- Reset button for demo purposes -->
+    <!-- Reset button -->
     <button
       (click)="resetExperience($event)"
-      class="fixed bottom-6 right-6 z-40 border border-[#333] bg-[#0a0a0a] px-3 py-1 text-[10px] uppercase tracking-widest text-[var(--dimmed)] transition-colors hover:border-[var(--phosphor)] hover:text-[var(--phosphor)] font-mono"
+      class="fixed bottom-6 right-6 z-40 border border-[#333] bg-[#0a0a0a]/90 backdrop-blur-sm px-4 py-2 text-[10px] uppercase tracking-widest text-[var(--dimmed)] transition-all duration-500 hover:border-[var(--phosphor)] hover:text-[var(--phosphor)] hover:shadow-[0_0_12px_var(--phosphor-dim)] font-mono rounded-sm"
     >
-      Replay Intro
+      ⟲ Replay Intro
     </button>
   }
 </div>

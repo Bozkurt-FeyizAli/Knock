@@ -1,0 +1,72 @@
+/* Yeni animasyon sınıfları ve katmanlar */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+}
+
+.radio-enter-animation {
+  animation: radio-fade-in 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes radio-fade-in {
+  0% {
+    opacity: 0;
+    filter: blur(8px) brightness(2);
+    transform: scale(1.02);
+  }
+  40% {
+    opacity: 0.5;
+    filter: blur(2px) brightness(1.3);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: scale(1);
+  }
+}
+
+/* Gelişmiş shake kademeleri */
+.shake-subtle {
+  animation: shake-subtle 0.3s infinite;
+}
+.shake-light {
+  animation: shake-light 0.2s infinite;
+}
+.shake-medium {
+  animation: shake-medium 0.15s infinite;
+}
+.shake-heavy {
+  animation: shake-heavy 0.08s infinite;
+}
+
+@keyframes shake-subtle {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(1px, -1px); }
+}
+@keyframes shake-light {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  75% { transform: translate(2px, -1px); }
+}
+@keyframes shake-medium {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 2px); }
+  75% { transform: translate(3px, -2px); }
+}
+@keyframes shake-heavy {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-4px, 3px) rotate(-0.5deg); }
+  75% { transform: translate(4px, -3px) rotate(0.5deg); }
+}
+
+.text-intensify {
+  text-shadow: 0 0 20px var(--phosphor), 0 0 40px var(--phosphor-dim);
+  transition: text-shadow 0.5s ease;
+}
+
+.freq-dial span {
+  display: inline-block;
+}

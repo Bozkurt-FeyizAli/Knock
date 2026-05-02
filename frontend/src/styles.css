@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+
+:root {
+  --void: #050505;
+  --faded-white: #e8d5c0;
+  --dimmed: #6b5a4e;
+  --phosphor: #d97a06;
+  --phosphor-dim: #8a4b0a;
+  --radio-wood: #2a1a0a;
+  --radio-wood-light: #3d2a15;
+  --grain: rgba(0,0,0,0.3);
+}
+
+/* Genel font ayarları */
+.font-display {
+  font-family: 'Courier New', 'IBM Plex Mono', monospace;
+}
+
+/* Scrollbar temizliği */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a1a00;
+  border-radius: 2px;
+}
+
+
 @layer base {
   :root {
     --phosphor: #00ff41;
@@ -283,3 +313,5 @@
     100% { top: 100%; }
   }
 }
+
+
