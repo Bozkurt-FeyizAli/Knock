@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
@@ -17,7 +18,7 @@ namespace backend.Services
             _configuration = configuration;
         }
 
-        public async Task<string> GenerateImageBase64Async(string prompt)
+        public async Task<string> GenerateImageBase64Async(string prompt, string sentiment = "NEUTRAL")
         {
             var apiKey = _configuration["AI_APIs:StabilityAI:ApiKey"];
             if (string.IsNullOrEmpty(apiKey))
@@ -26,18 +27,36 @@ namespace backend.Services
             }
 
             var url = "https://api.stability.ai/v2beta/stable-image/generate/core";
-            
-            // Append 1970s polaroid style to prompt
-            var styledPrompt = $"1970s vintage polaroid photo, moody lighting, analog photography, {prompt}";
+
+            // Duyguya özgü atmosfer tanımlayıcısı
+            var moodDescriptor = sentiment.ToUpper() switch
+            {
+                "NEGATIVE" => "dim, melancholic, rainy window, cold blue tint, lonely, desolate",
+                "POSITIVE" => "warm sunrise, hopeful, golden hour, soft bokeh, gentle light, serene",
+                _          => "quiet afternoon, nostalgic, faded colors, still life, timeless"
+            };
+
+            // Stil odaklı prompt — fotoğraf makinesi çizdirmez
+            var styledPrompt = $"1970s polaroid-style image, faded analog film colors, white polaroid frame, soft film grain, moody lighting, {moodDescriptor}, {prompt}";
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Add("Authorization", $"Bearer {apiKey}");
             request.Headers.Add("Accept", "image/*");
 
-            using var content = new MultipartFormDataContent();
-            content.Add(new StringContent(styledPrompt), "\"prompt\"");
-content.Add(new StringContent("webp"), "\"output_format\"");
-            
+            // Ham multipart/form-data gövdesi (name parametreleri tırnak içinde)
+            var boundary = "----FormBoundary" + Guid.NewGuid().ToString("N");
+            var rawBody =
+                $"--{boundary}\r\n" +
+                $"Content-Disposition: form-data; name=\"prompt\"\r\n\r\n" +
+                $"{styledPrompt}\r\n" +
+                $"--{boundary}\r\n" +
+                $"Content-Disposition: form-data; name=\"output_format\"\r\n\r\n" +
+                $"webp\r\n" +
+                $"--{boundary}--\r\n";
+
+            var content = new StringContent(rawBody, Encoding.UTF8);
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse($"multipart/form-data; boundary={boundary}");
+
             request.Content = content;
 
             try
