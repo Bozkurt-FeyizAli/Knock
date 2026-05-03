@@ -37,7 +37,6 @@ export class TransmissionDisplay implements OnChanges {
     this.typingInterval = setInterval(() => {
       if (i < fullText.length) {
         this.displayedText += fullText.charAt(i);
-        // this.audioService.playTypewriterClick(); // Yorum satırına alındı: Ses çakışmasını önlemek için
         i++;
       } else {
         clearInterval(this.typingInterval);

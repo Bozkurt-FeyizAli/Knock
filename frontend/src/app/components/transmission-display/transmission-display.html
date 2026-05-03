@@ -1,14 +1,28 @@
-<!-- The Transmission Screen: where the radio speaks back -->
+<div class="transmission-screen mt-8 p-5 sm:p-7 rounded-sm relative min-h-[220px] font-mono text-amber-500 overflow-hidden transition-all duration-1000"
+     [class.sentiment-negative]="detectedSentiment === 'NEGATIVE'"
+     [class.sentiment-positive]="detectedSentiment === 'POSITIVE'"
+     [class.sentiment-neutral]="detectedSentiment === 'NEUTRAL'">
 
-<div class="transmission-screen mt-8 p-5 sm:p-7 rounded-sm relative min-h-[220px] font-mono text-amber-500 overflow-hidden">
-
-  <!-- Static/noise texture overlay -->
+  <!-- Static/noise texture -->
   <div class="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay z-[1]"
        style="background-image: url('https://www.transparenttextures.com/patterns/stardust.png');">
   </div>
 
   <!-- Scanline effect -->
   <div class="scanline-overlay absolute inset-0 z-[2]"></div>
+
+  <!-- Sinyal ışığı (yeni) -->
+  <div class="absolute top-3 right-4 z-20 flex items-center gap-2">
+    <div class="w-1.5 h-1.5 rounded-full"
+         [class.bg-amber-600]="!isLoading && !error"
+         [class.bg-red-600]="error"
+         [class.bg-amber-800]="!displayedText && !isLoading && !error"
+         [style.boxShadow]="!isLoading ? '0 0 6px currentColor' : 'none'">
+    </div>
+    <span class="text-[7px] text-amber-700/30 tracking-[0.4em] uppercase">
+      {{ isLoading ? 'SEARCHING' : error ? 'LOST' : displayedText ? 'RECEIVED' : 'STANDBY' }}
+    </span>
+  </div>
 
   <!-- Inner vignette -->
   <div class="absolute inset-0 pointer-events-none z-[3]"
@@ -19,26 +33,19 @@
   <div class="relative z-10">
 
     @if (isLoading) {
-      <!-- TUNING SEQUENCE -->
       <div class="flex flex-col items-center justify-center py-8">
-        <!-- Frequency label -->
         <div class="text-xl sm:text-2xl mb-6 text-amber-600/80 tracking-[0.3em] uppercase font-display"
              style="animation: signal-pulse 2s ease-in-out infinite;">
           [- TUNING -]
         </div>
 
-        <!-- Analog tuning bar -->
         <div class="tuning-bar w-full h-7 relative flex items-center">
-          <!-- Scanning needle -->
           <div class="tuning-needle"></div>
-
-          <!-- Frequency marks -->
           <div class="flex justify-between w-full px-3 opacity-40 text-[9px] text-amber-500 font-mono tracking-[0.2em] pointer-events-none select-none">
-            <span>530</span><span>|</span><span>|</span><span>|</span><span>800</span><span>|</span><span>|</span><span>|</span><span>1200</span><span>|</span><span>|</span><span>|</span><span>1600</span>
+            <span>530</span><span>·</span><span>·</span><span>·</span><span>800</span><span>·</span><span>·</span><span>·</span><span>1200</span><span>·</span><span>·</span><span>·</span><span>1600</span>
           </div>
         </div>
 
-        <!-- Static wave visualization -->
         <div class="flex items-end gap-[2px] mt-6 h-8 opacity-30">
           <div *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]; let idx = index"
               class="w-[3px] bg-amber-600 rounded-full"
@@ -48,59 +55,71 @@
           </div>
         </div>
 
-        <!-- Subtitle -->
-        <p class="mt-5 text-[10px] text-amber-700/40 tracking-[0.4em] uppercase font-mono">
+        <p class="mt-5 text-[10px] text-amber-700/40 tracking-[0.4em] uppercase font-mono animate-pulse">
           Searching the frequency...
         </p>
       </div>
 
     } @else if (error) {
-      <!-- ERROR STATE -->
       <div class="py-6">
         <div class="text-red-500/80 font-bold font-mono text-sm tracking-wider">
-          <span class="text-red-600/60">[STATIC]</span> {{ error }}
+          <span class="text-red-600/60">[STATIC OVERLOAD]</span><br>
+          <span class="text-base mt-2 block">{{ error }}</span>
         </div>
-        <p class="mt-3 text-[10px] text-red-800/30 tracking-widest uppercase">
-          The signal was lost in the noise
+        <p class="mt-4 text-[10px] text-red-800/30 tracking-widest uppercase">
+          Signal lost in transmission · Try a different burden
         </p> 
       </div>
 
     } @else if (displayedText) {
-      <!-- TRANSMISSION RECEIVED -->
       <div class="flex flex-col md:flex-row gap-6 py-2">
 
-        <!-- Typewriter text -->
-        <div class="whitespace-pre-wrap leading-relaxed flex-1 text-amber-400/90 text-sm sm:text-base"
+        <!-- Typewriter text with paper texture -->
+        <div class="whitespace-pre-wrap leading-relaxed flex-1 text-amber-400/90 text-sm sm:text-base relative"
              style="text-shadow: 0 0 8px rgba(217,119,6,0.1);">
+          <!-- Kağıt arka plan efekti -->
+          <div class="absolute inset-0 opacity-[0.02] pointer-events-none"
+               style="background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(217,119,6,0.05) 4px, rgba(217,119,6,0.05) 5px);">
+          </div>
           <span class="text-amber-600/50 select-none">&gt; </span>{{ displayedText }}<span class="text-cursor-blink text-amber-500/70">_</span>
         </div>
 
-        <!-- Polaroid memory -->
+        <!-- Polaroid memory (güncellendi) -->
         @if (imageBase64) {
-          <div class="shrink-0 self-start polaroid-frame p-3 pb-10 transform rotate-2 max-w-xs border border-gray-300/50">
+          <div class="shrink-0 self-start polaroid-frame p-3 pb-10 transform rotate-2 max-w-xs border border-gray-300/50 hover:rotate-1 transition-transform duration-500"
+               style="background: #f4f0eb; box-shadow: 3px 5px 20px rgba(0,0,0,0.5), 0 0 30px rgba(217,119,6,0.08);">
             <img [src]="'data:image/jpeg;base64,' + imageBase64"
                  alt="A memory from the frequency"
                  class="w-full aspect-square object-cover border border-gray-400/30 mix-blend-multiply">
-            <!-- Handwritten caption area -->
-            <div class="mt-2 text-center font-serif italic text-[10px] text-gray-500/60">
+            <!-- Handwritten caption -->
+            <div class="mt-2 text-center font-serif italic text-[10px] text-gray-600/80"
+                 style="font-family: 'Georgia', serif; transform: rotate(-0.5deg);">
               {{ detectedSentiment || 'a frequency remembered' }}
+            </div>
+            <!-- Polaroid tarih damgası -->
+            <div class="absolute bottom-3 right-3 text-[7px] text-gray-400/50 font-mono tracking-wider">
+              {{ '73' }}
             </div>
           </div>
         }
       </div>
 
     } @else {
-      <!-- IDLE / AWAITING -->
+      <!-- IDLE - geliştirildi -->
       <div class="flex flex-col items-center justify-center py-10">
         <div class="opacity-20 text-center">
           <div class="text-amber-600/50 font-mono text-sm tracking-[0.3em]">
             &gt; Awaiting Signal...
           </div>
-          <div class="mt-3 flex items-center justify-center gap-1">
-            <div class="w-1 h-1 rounded-full bg-amber-700/20" style="animation: signal-pulse 3s ease-in-out infinite;"></div>
-            <div class="w-1 h-1 rounded-full bg-amber-700/20" style="animation: signal-pulse 3s ease-in-out infinite; animation-delay: 0.5s;"></div>
-            <div class="w-1 h-1 rounded-full bg-amber-700/20" style="animation: signal-pulse 3s ease-in-out infinite; animation-delay: 1s;"></div>
+          <div class="mt-4 flex items-center justify-center gap-1.5">
+            <div class="w-1.5 h-1.5 rounded-full bg-amber-700/25" style="animation: signal-idle 3s ease-in-out infinite;"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-amber-700/25" style="animation: signal-idle 3s ease-in-out infinite; animation-delay: 0.4s;"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-amber-700/25" style="animation: signal-idle 3s ease-in-out infinite; animation-delay: 0.8s;"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-amber-700/25" style="animation: signal-idle 3s ease-in-out infinite; animation-delay: 1.2s;"></div>
           </div>
+          <p class="mt-6 text-[9px] text-amber-800/20 tracking-[0.5em] uppercase font-mono">
+            Press badge to transmit
+          </p>
         </div>
       </div>
     }
