@@ -32,11 +32,11 @@ namespace backend.Services
             // Endpoint: https://api.elevenlabs.io/v1/text-to-speech/{voice_id}
             var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}{voiceId}");
             
-            // ElevenLabs API'si anahtarı xi-api-key header'ında bekler
+            // Add eleven labs api key to header
             request.Headers.Add("xi-api-key", apiKey);
             request.Headers.Add("accept", "audio/mpeg");
 
-            // İstek gövdesi (Payload)
+            // Request body
             var payload = new
             {
                 text = text,
@@ -51,7 +51,7 @@ namespace backend.Services
             var jsonContent = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
             request.Content = jsonContent;
 
-            // İsteği gönder
+            // Send the request
             var response = await _httpClient.SendAsync(request);
             
             if (!response.IsSuccessStatusCode)
@@ -61,7 +61,7 @@ namespace backend.Services
                 return string.Empty; // Return empty instead of throwing to prevent backend crash if audio fails
             }
 
-            // Dönen MP3 ses dosyasını byte dizisine çevir ve Base64 olarak döndür (Frontend için)
+            // Convert the MP3 audio file to byte array and return as Base64 (For Frontend)
             var audioBytes = await response.Content.ReadAsByteArrayAsync();
             return Convert.ToBase64String(audioBytes);
         }

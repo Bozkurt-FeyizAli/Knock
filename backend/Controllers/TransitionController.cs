@@ -38,7 +38,7 @@ public class TransitionController : ControllerBase
 
         try
         {
-            // 1. LLM ve Sentiment analizini PARALEL çalıştır
+            // 1. Parallel works llm and sentiment analysis
             var llmTask = _geminiService.GenerateFarewellTextAsync(request.UserBurden);
             var sentimentTask = _sentimentService.AnalyzeSentimentAsync(request.UserBurden);
 
@@ -47,7 +47,7 @@ public class TransitionController : ControllerBase
             var farewellText = llmTask.Result;
             var detectedSentiment = sentimentTask.Result;
 
-            // 2. TTS ve Image Generation servislerini PARALEL çalıştır
+            // 2. Parallel works TTS and Image Generation 
             var audioTask = _audioService.GenerateAudioBase64Async(farewellText, detectedSentiment);
             var imageTask = _imageService.GenerateImageBase64Async(request.UserBurden, detectedSentiment);
 

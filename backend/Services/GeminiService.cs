@@ -15,11 +15,11 @@ public class GeminiService
         _httpClient = httpClient;
         _configuration = configuration;
 
-        // Model ID listesini yapılandırmadan al
+        // get model ids from configuration
         var modelSection = _configuration.GetSection("AI_APIs:Gemini:ModelIds");
         _modelIds = modelSection.Get<List<string>>() ?? new List<string>();
 
-        // Uyumluluk: Eski tekli "ModelId" tanımlıysa onu da listeye ekle
+        // compatibility : if there is a single "ModelId" defined, add it to the list
         var singleModel = _configuration["AI_APIs:Gemini:ModelId"];
         if (!string.IsNullOrEmpty(singleModel) && !_modelIds.Contains(singleModel))
         {
@@ -89,7 +89,7 @@ public class GeminiService
             }
         }
 
-        // Tüm modeller başarısız olduysa
+        // all models failed
         Console.WriteLine("All Gemini models failed.");
         throw new Exception("All Gemini models are currently rate limited. Please try again later.", lastException);
     }

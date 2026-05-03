@@ -28,7 +28,7 @@ namespace backend.Services
 
             var url = "https://api.stability.ai/v2beta/stable-image/generate/core";
 
-            // Duyguya özgü atmosfer tanımlayıcısı
+            // get mood descriptor
             var moodDescriptor = sentiment.ToUpper() switch
             {
                 "NEGATIVE" => "dim, melancholic, rainy window, cold blue tint, lonely, desolate",
@@ -36,14 +36,14 @@ namespace backend.Services
                 _          => "quiet afternoon, nostalgic, faded colors, still life, timeless"
             };
 
-            // Stil odaklı prompt — fotoğraf makinesi çizdirmez
+            // style based prompt - does not draw camera
             var styledPrompt = $"1970s polaroid-style image, faded analog film colors, white polaroid frame, soft film grain, moody lighting, {moodDescriptor}, {prompt}";
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Add("Authorization", $"Bearer {apiKey}");
             request.Headers.Add("Accept", "image/*");
 
-            // Ham multipart/form-data gövdesi (name parametreleri tırnak içinde)
+            // multipart/form-data body (name parameters in quotes)
             var boundary = "----FormBoundary" + Guid.NewGuid().ToString("N");
             var rawBody =
                 $"--{boundary}\r\n" +
